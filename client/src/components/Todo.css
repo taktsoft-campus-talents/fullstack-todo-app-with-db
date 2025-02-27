@@ -1,0 +1,18 @@
+.todo-container {
+  border: 1px solid lightblue;
+  min-width: 400px;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0;
+}
+
+.checkbox-group {
+  display: flex;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+}

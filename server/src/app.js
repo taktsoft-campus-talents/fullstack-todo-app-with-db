@@ -30,9 +30,9 @@ app.get("/todos", async (req, res) => {
 app.get("/todos/:id", async (req, res) => {
   const id = req.params.id;
 
-  const todo = await db.select().from("todos").where("id", id);
+  const todo = await db.select().from("todos").where("id", id).first();
 
-  if (!todo.length) {
+  if (!todo) {
     return res.status(404).json({ message: "No tasks, enjoy your day off!" });
   }
 
@@ -45,7 +45,6 @@ app.post("/todos", async (req, res) => {
   }
 
   const task = await db.select().from("todos").where("task", req.body.task);
-  console.log(task);
 
   if (task.length) {
     return res.send("This todo was already added");
@@ -76,6 +75,27 @@ app.patch("/todos/:id", (req, res) => {
   // const patchedTodo = { ...todos[indexToPatch], ...req.body };
   // todos[indexToPatch] = patchedTodo;
   // return res.json(patchedTodo);
+});
+
+app.post("/users", async (req, res) => {
+  if (!req.body.email) {
+    return res.send("Please check if your body has email property");
+  }
+
+  const existedUser = await db
+    .select("email")
+    .from("users")
+    .where("email", req.body.email)
+    .first();
+  console.log(existedUser);
+
+  if (existedUser) {
+    return res.json({ message: "This user already exists", user: req.body });
+  }
+
+  await db("users").insert(req.body);
+
+  return res.json({ message: "A user was added succesfully", user: req.body });
 });
 
 app.listen(port, () => {

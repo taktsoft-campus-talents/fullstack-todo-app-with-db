@@ -2,12 +2,21 @@ import "./App.css";
 import axios from "axios";
 import { useState } from "react";
 import Todo from "./components/Todo";
+import Registration from "./components/Registration";
+import useLocalStorageState from "use-local-storage-state";
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 console.log(import.meta.env);
 
 function App() {
   const [todos, setTodos] = useState([]);
+  const [user, setUser] = useLocalStorageState("user", {
+    defaultValue: null,
+  });
+
+  function loginUser(user) {
+    setUser(user);
+  }
 
   async function handleGetTodos() {
     const response = await axios.get(`${API_HOST}/todos`);
@@ -37,6 +46,10 @@ function App() {
   }
   return (
     <>
+      <Registration user={user} loginUser={loginUser}></Registration>
+
+      {user ? <p>Welcome {user.email}</p> : undefined}
+
       <h1>Todos</h1>
       <button onClick={handleGetTodos}>Get Todos</button>
       <ul>

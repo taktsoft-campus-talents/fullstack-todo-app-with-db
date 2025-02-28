@@ -87,15 +87,17 @@ app.post("/users", async (req, res) => {
     .from("users")
     .where("email", req.body.email)
     .first();
-  console.log(existedUser);
 
   if (existedUser) {
-    return res.json({ message: "This user already exists", user: req.body });
+    return res.json({ message: "This user already exists", user: existedUser });
   }
 
-  await db("users").insert(req.body);
+  const newUser = await db("users").insert(req.body).returning("*");
 
-  return res.json({ message: "A user was added succesfully", user: req.body });
+  return res.json({
+    message: "A user was added succesfully",
+    user: newUser[0],
+  });
 });
 
 app.listen(port, () => {
